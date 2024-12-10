@@ -1,0 +1,34 @@
+{
+  "name": "verify-tauri-android",
+  "dockerComposeFile": [
+    "../.docker/docker-compose.yml"
+  ],
+  "remoteUser": "root",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "[rust]": {
+          "editor.formatOnSave": true,
+          "editor.formatOnPaste": true
+        },
+        "rust-analyzer.checkOnSave": true,
+        "rust-analyzer.check.command": "clippy",
+        "workbench.colorCustomizations": {
+          "titleBar.activeBackground": "#00ff371c"
+        }
+      },
+      "extensions": [
+        "Gruntfuggly.todo-tree",
+        "streetsidesoftware.code-spell-checker",
+        "GitHub.vscode-pull-request-github",
+        "yzhang.markdown-all-in-one",
+        "mhutchie.git-graph",
+        "ms-azuretools.vscode-docker",
+        "humao.rest-client",
+        "vsls-contrib.gistfs"
+      ]
+    }
+  }
+}
