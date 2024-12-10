@@ -13,6 +13,8 @@ RUN apt-get update && apt-get install -y \
     librsvg2-dev \
     openjdk-11-jdk \
     unzip \
+    android-sdk \
+    android-sdk-platform-23 \
     && rm -rf /var/lib/apt/lists/*
 
 # Rustのインストール
@@ -23,22 +25,10 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs
 
-# Android SDKのインストール
-RUN mkdir -p /opt/android-sdk && cd /opt/android-sdk \
-    && curl -o sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip \
-    && unzip sdk-tools.zip -d tools \
-    && rm sdk-tools.zip \
-    && yes | tools/bin/sdkmanager --licenses \
-    && tools/bin/sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
-
-ENV ANDROID_HOME=/opt/android-sdk
-ENV PATH=${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${PATH}
-
-# Tauri CLIのインストール
-RUN npm install -g @tauri-apps/cli
+# 環境変数の設定
+ENV ANDROID_HOME=/usr/lib/android-sdk
+ENV PATH=${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:${PATH}
 
 # 作業ディレクトリを設定
 WORKDIR /app
 
-# 依存関係のインストール
-RUN npm install
