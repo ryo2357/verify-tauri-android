@@ -6,6 +6,9 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ../:/workspace:cached
+      # gitの設定をコンテナにマウント
+      - ~/.gitconfig:/root/.gitconfig
+      - ~/.ssh:/root/.ssh
     command: sleep infinity
     environment:
       - TZ=Asia/Tokyo

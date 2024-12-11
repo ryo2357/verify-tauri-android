@@ -30,5 +30,9 @@
         "vsls-contrib.gistfs"
       ]
     }
-  }
+  },
+  "mounts": [
+    "source=${localEnv:HOME}/.gitconfig,target=/root/.gitconfig,type=bind",
+    "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind"
+  ]
 }

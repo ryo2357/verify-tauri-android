@@ -3,6 +3,7 @@ FROM debian:bullseye-slim
 
 # 必要なツールをインストール
 RUN apt-get update && apt-get install -y \
+    git \
     curl \
     gnupg \
     build-essential \
