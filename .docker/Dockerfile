@@ -33,3 +33,6 @@ ENV PATH=${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:${PATH}
 # 作業ディレクトリを設定
 WORKDIR /app
 
+# Tauri CLIのインストール
+RUN npm install -g @tauri-apps/cli
+
