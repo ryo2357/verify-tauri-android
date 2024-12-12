@@ -3,15 +3,27 @@ services:
     image: verify-tauri-android
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: rust_image.dockerfile
     volumes:
       - ../:/workspace:cached
       # gitの設定をコンテナにマウント
       - ~/.gitconfig:/root/.gitconfig
       - ~/.ssh:/root/.ssh
+      # Rustイメージ用に追記
+      - type: bind
+        source: /tmp/.X11-unix
+        target: /tmp/.X11-unix
+      - type: bind
+        source: "${XDG_RUNTIME_DIR}/wayland-0"
+        target: /tmp/wayland-0
     command: sleep infinity
     environment:
       - TZ=Asia/Tokyo
+      # Rustイメージ用に追記
+      - DISPLAY=$DISPLAY
+      - WAYLAND_DISPLAY=$WAYLAND_DISPLAY
+      - XDG_RUNTIME_DIR=/tmp
+      - PULSE_SERVER=$PULSE_SERVER
     env_file: ../.env
     ports:
       - "8080:3000"
