@@ -1,7 +1,12 @@
 {
   "name": "verify-tauri-android",
   "dockerComposeFile": [
-    "../.docker/docker-compose.yaml"
+    // tauriデスクトップの開発コンテナ
+    // 動作確認済み
+    // "../desktop_image/docker-compose.yaml",
+    // tauriモバイル(android)の開発コンテナ
+    // 調整中
+    "../android_image/docker-compose.yaml"
   ],
   "remoteUser": "root",
   "service": "app",

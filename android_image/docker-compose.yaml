@@ -3,7 +3,7 @@ services:
     image: verify-tauri-android
     build:
       context: .
-      dockerfile: rust_image.dockerfile
+      dockerfile: Dockerfile
     volumes:
       - ../:/workspace:cached
       # gitの設定をコンテナにマウント
@@ -27,4 +27,3 @@ services:
     env_file: ../.env
     ports:
       - "8080:3000"
-
