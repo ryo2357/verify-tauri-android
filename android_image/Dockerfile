@@ -19,19 +19,15 @@ RUN apt update && \
   cmake \
   # 公式から
   file \
-  libxdo-dev \
-  # 追加
-  libsoup-3.0-dev \
-  lld \
-  libayatana-appindicator3-0.1-cil-dev \
-  sudo \
-  fonts-noto-cjk \
-  gcc-multilib libssl-dev \
-  openjdk-17-jdk-headless \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
+  libxdo-dev
 
-# Rustの準備
+
+# フロントがRustでWASM関係の物が多い。不要そうなものは外した
+# RUN rustup component add rls rust-analysis rust-src rustfmt clippy && \
+#     cargo install cargo-edit cargo-watch cargo-make sqlx-cli tauri-cli trunk && \
+#     rustup install nightly && \
+#     rustup target add wasm32-unknown-unknown
+
 RUN rustup component add rls rust-analysis rust-src rustfmt clippy && \
   cargo install \
   cargo-edit \
@@ -41,8 +37,6 @@ RUN rustup component add rls rust-analysis rust-src rustfmt clippy && \
 
 RUN cargo install create-tauri-app --locked
 
-ENV RUST_BACKTRACE=1
-
 # Node.jsのインストール
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
   && apt-get install -y nodejs
@@ -50,45 +44,43 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
 # pnpmのインストール
 RUN npm install -g pnpm
 
-# Android
-ENV ANDROID_HOME /home/root/Android
-ENV NDK_HOME $ANDROID_HOME/ndk/27.0.11902837/
 
-RUN mkdir -p $ANDROID_HOME/cmdline-tools \
-  && curl -LO https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip?hl=ja \
-  && unzip commandlinetools-linux-11076708_latest.zip \
-  && mv cmdline-tools $ANDROID_HOME/cmdline-tools/latest \
-  && rm commandlinetools-linux-11076708_latest.zip \
-  && yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;27.0.11902837" --sdk_root=$ANDROID_HOME \
-  && yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "emulator" --sdk_root=$ANDROID_HOME \
-  && yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;34.0.0" --sdk_root=$ANDROID_HOME \
-  && yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-34" --sdk_root=$ANDROID_HOME \
-  && sudo ln -s $ANDROID_HOME/ndk/27.0.11902837/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android34-clang /usr/local/bin/aarch64-linux-android-clang \
-  && sudo ln -s $ANDROID_HOME/ndk/27.0.11902837/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ranlib /usr/local/bin/aarch64-linux-android-ranlib \
-  && sudo ln -s $ANDROID_HOME/ndk/27.0.11902837/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ranlib /usr/local/bin/i686-linux-android-ranlib \
-  && sudo ln -s $ANDROID_HOME/ndk/27.0.11902837/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ranlib /usr/local/bin/x86_64-linux-android-ranlib \
-  && sudo ln -s $ANDROID_HOME/ndk/27.0.11902837/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ranlib /usr/local/bin/arm-linux-androideabi-ranlib \
-  # && /home/root/.cargo/bin/rustup target add aarch64-linux-android \
-  # && /home/root/.cargo/bin/rustup target add armv7-linux-androideabi \
-  # && /home/root/.cargo/bin/rustup target add i686-linux-android \
-  # && /home/root/.cargo/bin/rustup target add x86_64-linux-android
-  && rustup target add aarch64-linux-android \
-  && rustup target add armv7-linux-androideabi \
-  && rustup target add i686-linux-android \
-  && rustup target add x86_64-linux-android
+ENV RUST_BACKTRACE=1
+
+# AndroidStudioの環境構築
+# 64ビットに必用なライブラリ
+# RUN apt-get install dpkg
+
+RUN dpkg --add-architecture i386 && \
+    apt-get update && \
+    apt-get install -y \
+    libc6:i386 \
+    libncurses5:i386 \
+    libstdc++6:i386 \
+    lib32z1 \
+    libbz2-1.0:i386
+
+# JAVA関係
+# RUN apt install -y \
+#     openjdk-11-jdk \
+#     libxi6 \
+#     libxrender1 \
+#     libxtst6 \
 
 
-# イメージのビルドはできるがアプリのビルドはできない
-# Finished `dev` profile [unoptimized + debuginfo] target(s) in 28.99s
-# Info symlinking lib "/workspace/tauri-app/src-tauri/target/aarch64-linux-android/debug/libtauri_app_lib.so" in jniLibs dir "/workspace/tauri-app/src-tauri/gen/android/app/src/main/jniLibs/arm64-v8a"
-# Info "/workspace/tauri-app/src-tauri/target/aarch64-linux-android/debug/libtauri_app_lib.so" requires shared lib "libandroid.so"
-# Info "/workspace/tauri-app/src-tauri/target/aarch64-linux-android/debug/libtauri_app_lib.so" requires shared lib "libdl.so"
-# Info "/workspace/tauri-app/src-tauri/target/aarch64-linux-android/debug/libtauri_app_lib.so" requires shared lib "liblog.so"
-# Info "/workspace/tauri-app/src-tauri/target/aarch64-linux-android/debug/libtauri_app_lib.so" requires shared lib "libm.so"
-# Info "/workspace/tauri-app/src-tauri/target/aarch64-linux-android/debug/libtauri_app_lib.so" requires shared lib "libc.so"
-# Info Opening Android Studio
-# Error Launch failed: No such file or directory (os error 2)
+RUN wget https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2024.2.1.11/android-studio-2024.2.1.11-linux.tar.gz
+RUN tar -zxvf android-studio-2024.2.1.11-linux.tar.gz -C /opt
 
-# pnpm run tauri android initi
-# pnpm run tauri android dev --open
-# で動かない
+RUN wget -O android-ndk-r27c-linux.zip https://dl.google.com/android/repository/android-ndk-r27c-linux.zip?hl=ja
+RUN unzip android-ndk-r27c-linux.zip -d /opt/android-studio
+
+ENV ANDROID_HOME /opt/android-studio
+ENV NDK_HOME $ANDROID_HOME/android-ndk-r27c
+ENV JAVA_HOME /opt/android-studio/jbr
+ENV PATH $PATH:$ANDROID_HOME/bin
+
+# rustup target add aarch64-linux-android
+# rustup toolchain install stable-aarch64-linux-android
+
+RUN rustup target add aarch64-linux-android
+# RUN rustup toolchain install stable-aarch64-linux-android ⇒解決できない必用検証が必用
