@@ -20,6 +20,7 @@
         },
         "rust-analyzer.checkOnSave": true,
         "rust-analyzer.check.command": "clippy",
+        "rust-analyzer.server.path": "/usr/local/bin/rust-analyzer",
         "workbench.colorCustomizations": {
           "titleBar.activeBackground": "#00ff371c"
         }

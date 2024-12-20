@@ -77,10 +77,30 @@ RUN unzip android-ndk-r27c-linux.zip -d /opt/android-studio
 ENV ANDROID_HOME /opt/android-studio
 ENV NDK_HOME $ANDROID_HOME/android-ndk-r27c
 ENV JAVA_HOME /opt/android-studio/jbr
+
 ENV PATH $PATH:$ANDROID_HOME/bin
+ENV PATH $PATH:$ANDROID_HOME/emulator
+ENV PATH $PATH:$ANDROID_HOME/tools
+ENV PATH $PATH:$ANDROID_HOME/tools/bin
+ENV PATH $PATH:$ANDROID_HOME/platform-tools
 
 # rustup target add aarch64-linux-android
 # rustup toolchain install stable-aarch64-linux-android
 
 RUN rustup target add aarch64-linux-android
 # RUN rustup toolchain install stable-aarch64-linux-android ⇒解決できない必用検証が必用
+
+
+# # Android Emulatorのインストール
+# RUN wget -O android-emulator.zip https://dl.google.com/android/repository/emulator-linux_x64-30.9.5.zip
+# RUN unzip android-emulator.zip -d /opt/android-studio/emulator
+
+# # AVDの作成
+# RUN echo "no" | /opt/android-studio/tools/bin/avdmanager create avd -n test -k "system-images;android-30;google_apis;x86_64"
+
+# # エミュレータの起動スクリプト
+# RUN echo '#!/bin/bash\n\
+# /opt/android-studio/emulator/emulator -avd test -no-window -no-audio -gpu off' > /usr/local/bin/start-emulator.sh
+# RUN chmod +x /usr/local/bin/start-emulator.sh
+
+# ENV PATH $PATH:$ANDROID_HOME/emulator
