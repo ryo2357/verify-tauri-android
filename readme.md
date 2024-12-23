@@ -10,7 +10,7 @@ WSL2でtauriモバイルをビルドしたい
 - `.devcontainer/devcontainer.json`の"dockerComposeFile"を調整
 - devcontainerを立ち上げる
 
-## descktop image
+## desktop image
 
 RustとNodeのインストールしたデスクトップアプリの開発コンテナ
 
@@ -27,4 +27,8 @@ export PULSE_SERVER=/mnt/wslg/PulseServer
 
 ## android image
 
-descktop_imageにAndroidStudioを導入したandroidアプリの開発コンテナ
+desktop_imageにAndroidStudioを導入したandroidアプリの開発コンテナ
+
+SDKのインストールがAndroidStudioのGUIからでコンテナを調整する度に実行する必要がある。
+
+解決方法を思いつかないのでコンテナでの開発は保留
