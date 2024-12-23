@@ -71,19 +71,24 @@ RUN dpkg --add-architecture i386 && \
 RUN wget https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2024.2.1.11/android-studio-2024.2.1.11-linux.tar.gz
 RUN tar -zxvf android-studio-2024.2.1.11-linux.tar.gz -C /opt
 
-RUN wget -O android-ndk-r27c-linux.zip https://dl.google.com/android/repository/android-ndk-r27c-linux.zip?hl=ja
-RUN unzip android-ndk-r27c-linux.zip -d /opt/android-studio
+#  NDKはAndroidStudioでインストールするからいらんかも
+# RUN wget -O android-ndk-r27c-linux.zip https://dl.google.com/android/repository/android-ndk-r27c-linux.zip?hl=ja
+# RUN unzip android-ndk-r27c-linux.zip -d /opt/android-studio
 
 ENV ANDROID_HOME /opt/android-studio
-ENV NDK_HOME $ANDROID_HOME/android-ndk-r27c
 ENV JAVA_HOME /opt/android-studio/jbr
+# AndroidStudioのGUIからインストールしているのでコントロールできない
+ENV SDK_HOME /root/Android/Sdk
+# ここのversion管理どうすればいい？
+ENV NDK_HOME $SDK_HOME/ndk/28.0.12674087/
 
 ENV PATH $PATH:$ANDROID_HOME/bin
-ENV PATH $PATH:$ANDROID_HOME/emulator
-ENV PATH $PATH:$ANDROID_HOME/tools
-ENV PATH $PATH:$ANDROID_HOME/tools/bin
-ENV PATH $PATH:$ANDROID_HOME/platform-tools
-
+# SDK系
+ENV PATH $PATH:$NDK_HOME/emulator
+ENV PATH $PATH:$NDK_HOME/platform-tools
+# フォルダが存在していない
+ENV PATH $PATH:$NDK_HOME/tools
+ENV PATH $PATH:$NDK_HOME/tools/bin
 # rustup target add aarch64-linux-android
 # rustup toolchain install stable-aarch64-linux-android
 
